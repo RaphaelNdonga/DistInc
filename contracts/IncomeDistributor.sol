@@ -2,8 +2,6 @@
 pragma solidity ^0.8.0;
 
 contract IncomeDistributor {
-    address payable[] shareHoldersArray;
-    mapping(address => uint256) private shareHoldersMap;
     mapping(address => uint256) private addressToAmountFunded;
     uint256 buyingPrice = 40;
     uint256 sellingPrice;
@@ -28,9 +26,10 @@ contract IncomeDistributor {
 
     function distributeIncome() public payable {
         uint256 netProfit = sellingPrice - buyingPrice;
-        for (uint256 i = 0; i < shareHoldersArray.length; i++) {
-            address payable currentShareHolder = shareHoldersArray[i];
-            uint256 percent = shareHoldersMap[currentShareHolder];
+        for (uint256 i = 0; i < shareHolderArray.length; i++) {
+            address payable currentShareHolder = shareHolderArray[i]
+                .addressName;
+            uint256 percent = shareHolderArray[i].percent;
             uint256 income = (netProfit * percent) / 100;
             payable(currentShareHolder).transfer(income);
             addressToAmountFunded[currentShareHolder] += income;
@@ -44,19 +43,12 @@ contract IncomeDistributor {
         shareHolderArray.push(shareHolderData);
     }
 
-    function addShareHolder(address payable shareHolder, uint256 percent)
-        public
-    {
-        shareHoldersArray.push(shareHolder);
-        shareHoldersMap[shareHolder] = percent;
-    }
-
     function getShareHoldersArray(uint256 index) public view returns (address) {
-        return shareHoldersArray[index];
+        return shareHolderArray[index].addressName;
     }
 
     function getShareHoldersArraySize() public view returns (uint256) {
-        return shareHoldersArray.length;
+        return shareHolderArray.length;
     }
 
     function getAmountFunded(address shareHolder)
@@ -71,11 +63,11 @@ contract IncomeDistributor {
         return buyingPrice;
     }
 
-    function getShareHolderPercent(address shareHolder)
+    function getShareHolderPercent(uint256 index)
         public
         view
         returns (uint256)
     {
-        return shareHoldersMap[shareHolder];
+        return shareHolderArray[index].percent;
     }
 }
