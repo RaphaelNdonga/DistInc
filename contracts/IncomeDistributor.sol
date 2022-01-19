@@ -5,10 +5,22 @@ contract IncomeDistributor {
     address payable[] shareHoldersArray;
     mapping(address => uint256) private shareHoldersMap;
     mapping(address => uint256) private addressToAmountFunded;
-    uint256 public buyingPrice = 40;
+    uint256 buyingPrice = 40;
     uint256 sellingPrice;
 
+    struct ShareHolder {
+        address payable addressName;
+        uint256 percent;
+    }
+    ShareHolder shareHolderData;
+    ShareHolder[] shareHolderArray;
+
     function sellItem() public payable {
+        uint256 totalPercent = 0;
+        for (uint256 i = 0; i < shareHolderArray.length; i++) {
+            totalPercent += shareHolderArray[i].percent;
+        }
+        require(totalPercent == 100, "The shareHolders equity does not add up");
         sellingPrice = msg.value;
         require(sellingPrice > buyingPrice, "You cant sell at a loss");
         distributeIncome();
@@ -23,6 +35,13 @@ contract IncomeDistributor {
             payable(currentShareHolder).transfer(income);
             addressToAmountFunded[currentShareHolder] += income;
         }
+    }
+
+    function createShareHolder(address payable addressName, uint256 percent)
+        public
+    {
+        shareHolderData = ShareHolder(addressName, percent);
+        shareHolderArray.push(shareHolderData);
     }
 
     function addShareHolder(address payable shareHolder, uint256 percent)
