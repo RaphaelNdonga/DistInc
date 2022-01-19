@@ -70,4 +70,8 @@ contract IncomeDistributor {
     {
         return shareHolderArray[index].percent;
     }
+
+    function clearShareHolders() public {
+        delete shareHolderArray;
+    }
 }
