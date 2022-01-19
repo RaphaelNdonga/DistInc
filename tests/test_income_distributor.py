@@ -18,9 +18,19 @@ def test_add_shareHolders():
 def test_distributed_income():
     incomeDistributor = IncomeDistributor.deploy({"from": accounts[0]})
     incomeDistributor.addShareHolder(accounts[0], 10)
+    incomeDistributor.addShareHolder(accounts[1], 20)
+    incomeDistributor.addShareHolder(accounts[2], 30)
+    incomeDistributor.addShareHolder(accounts[3], 40)
 
     sellingPrice = 1000
+    buyingPrice = incomeDistributor.getBuyingPrice()
+
+    income = sellingPrice - buyingPrice
 
     incomeDistributor.sellItem({"from": accounts[0], "value": sellingPrice})
 
-    assert incomeDistributor.getAmountFunded(accounts[0]) == 96
+    for i in range(incomeDistributor.getShareHoldersArraySize()):
+        assert (
+            incomeDistributor.getAmountFunded(accounts[i])
+            == income * incomeDistributor.getShareHolderPercent(accounts[i]) / 100
+        )

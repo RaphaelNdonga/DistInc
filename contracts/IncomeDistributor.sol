@@ -5,7 +5,7 @@ contract IncomeDistributor {
     address payable[] shareHoldersArray;
     mapping(address => uint256) private shareHoldersMap;
     mapping(address => uint256) private addressToAmountFunded;
-    uint256 buyingPrice = 40;
+    uint256 public buyingPrice = 40;
     uint256 sellingPrice;
 
     function sellItem() public payable {
@@ -46,5 +46,17 @@ contract IncomeDistributor {
         returns (uint256)
     {
         return addressToAmountFunded[shareHolder];
+    }
+
+    function getBuyingPrice() public view returns (uint256) {
+        return buyingPrice;
+    }
+
+    function getShareHolderPercent(address shareHolder)
+        public
+        view
+        returns (uint256)
+    {
+        return shareHoldersMap[shareHolder];
     }
 }
